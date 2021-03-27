@@ -18,8 +18,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class IndexControllerTest {
@@ -28,7 +27,7 @@ public class IndexControllerTest {
     RecipeService recipeService;
 
     @Mock
-    Model model;
+    Model modelController;
 
     @InjectMocks
     IndexController controller;
@@ -39,12 +38,13 @@ public class IndexControllerTest {
 
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("index"));
+                .andExpect(view().name("index"))
+                .andExpect(model().attributeExists("recipes"));
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void getIndexPage() throws Exception {
+    public void getIndexPage() {
         Set<Recipe> recipes = new HashSet<>();
         recipes.add(new Recipe());
 
@@ -57,11 +57,11 @@ public class IndexControllerTest {
 
         ArgumentCaptor<Set<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
 
-        String viewName = controller.getIndexPage(model);
+        String viewName = controller.getIndexPage(modelController);
 
         assertEquals("index", viewName);
         verify(recipeService, times(1)).getRecipes();
-        verify(model, times(1)).addAttribute(eq("recipes"), argumentCaptor.capture());
+        verify(modelController, times(1)).addAttribute(eq("recipes"), argumentCaptor.capture());
         Set<Recipe> setInController = argumentCaptor.getValue();
         assertEquals(2, setInController.size());
     }
