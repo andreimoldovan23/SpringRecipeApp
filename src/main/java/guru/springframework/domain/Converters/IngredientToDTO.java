@@ -28,7 +28,7 @@ public class IngredientToDTO implements Converter<Ingredient, IngredientDTO> {
                     ingredientDTO.setId(ing.getId());
                     ingredientDTO.setAmount(ing.getAmount());
                     ingredientDTO.setDescription(ing.getDescription());
-                    ingredientDTO.setUnitOfMeasureDTO(unitOfMeasureToDTO.convert(ing.getUom()));
+                    ingredientDTO.setUom(unitOfMeasureToDTO.convert(ing.getUom()));
                     return ingredientDTO;
                 })
                 .orElse(null);

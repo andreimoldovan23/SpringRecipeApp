@@ -47,4 +47,15 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeToDTO.convert(savedRecipe);
     }
 
+    @Override
+    @Transactional
+    public RecipeDTO findDTObyId(Long id) {
+        return recipeToDTO.convert(findById(id));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        recipeRepository.deleteById(id);
+    }
+
 }

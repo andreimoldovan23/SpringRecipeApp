@@ -15,10 +15,12 @@ public class RecipeDTOtoEntity implements Converter<RecipeDTO, Recipe> {
 
     private final IngredientDTOtoEntity ingredientDTOtoEntity;
     private final CategoryDTOtoEntity categoryDTOtoEntity;
+    private final NotesDTOtoEntity notesDTOtoEntity;
 
-    public RecipeDTOtoEntity(CategoryDTOtoEntity categoryDTOtoEntity, IngredientDTOtoEntity ingredientDTOtoEntity) {
+    public RecipeDTOtoEntity(CategoryDTOtoEntity categoryDTOtoEntity, IngredientDTOtoEntity ingredientDTOtoEntity, NotesDTOtoEntity notesDTOtoEntity) {
         this.ingredientDTOtoEntity = ingredientDTOtoEntity;
         this.categoryDTOtoEntity = categoryDTOtoEntity;
+        this.notesDTOtoEntity = notesDTOtoEntity;
     }
 
     @Synchronized
@@ -36,15 +38,16 @@ public class RecipeDTOtoEntity implements Converter<RecipeDTO, Recipe> {
                             .servings(recpDTO.getServings())
                             .source(recpDTO.getSource())
                             .url(recpDTO.getUrl())
+                            .notes(notesDTOtoEntity.convert(recpDTO.getNotes()))
                             .build();
                     recipe.setId(recpDTO.getId());
                     recipe.getIngredients().addAll(
-                            recpDTO.getIngredientDTOS().stream()
+                            recpDTO.getIngredients().stream()
                                 .map(ingredientDTOtoEntity::convert)
                                 .collect(Collectors.toSet())
                     );
                     recipe.getCategories().addAll(
-                            recpDTO.getCategoryDTOS().stream()
+                            recpDTO.getCategories().stream()
                                 .map(categoryDTOtoEntity::convert)
                                 .collect(Collectors.toSet())
                     );

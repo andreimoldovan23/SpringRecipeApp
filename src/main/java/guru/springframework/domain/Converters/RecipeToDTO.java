@@ -15,10 +15,12 @@ public class RecipeToDTO implements Converter<Recipe, RecipeDTO> {
 
     private final CategoryToDTO categoryToDTO;
     private final IngredientToDTO ingredientToDTO;
+    private final NotesToDTO notesToDTO;
 
-    public RecipeToDTO(CategoryToDTO categoryToDTO, IngredientToDTO ingredientToDTO) {
+    public RecipeToDTO(CategoryToDTO categoryToDTO, IngredientToDTO ingredientToDTO, NotesToDTO notesToDTO) {
         this.categoryToDTO = categoryToDTO;
         this.ingredientToDTO = ingredientToDTO;
+        this.notesToDTO = notesToDTO;
     }
 
     @Synchronized
@@ -37,12 +39,13 @@ public class RecipeToDTO implements Converter<Recipe, RecipeDTO> {
                     recipeDTO.setSource(recp.getSource());
                     recipeDTO.setPrepTime(recp.getPrepTime());
                     recipeDTO.setUrl(recp.getUrl());
-                    recipeDTO.getCategoryDTOS().addAll(
+                    recipeDTO.setNotes(notesToDTO.convert(recp.getNotes()));
+                    recipeDTO.getCategories().addAll(
                             recp.getCategories().stream()
                                 .map(categoryToDTO::convert)
                                 .collect(Collectors.toSet())
                     );
-                    recipeDTO.getIngredientDTOS().addAll(
+                    recipeDTO.getIngredients().addAll(
                             recp.getIngredients().stream()
                                 .map(ingredientToDTO::convert)
                                 .collect(Collectors.toSet())

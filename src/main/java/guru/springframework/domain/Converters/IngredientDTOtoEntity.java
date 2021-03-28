@@ -27,7 +27,7 @@ public class IngredientDTOtoEntity implements Converter<IngredientDTO, Ingredien
                     final Ingredient ingredient = Ingredient.builder()
                             .description(ingDto.getDescription())
                             .amount(ingDto.getAmount())
-                            .uom(uomdtOtoEntity.convert(ingDto.getUnitOfMeasureDTO()))
+                            .uom(uomdtOtoEntity.convert(ingDto.getUom()))
                             .build();
                     ingredient.setId(ingDto.getId());
                     return ingredient;

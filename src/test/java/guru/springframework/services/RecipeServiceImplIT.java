@@ -43,8 +43,8 @@ public class RecipeServiceImplIT {
 
         assertEquals(NEW_DESCRIPTION, savedRecipeDTO.getDescription());
         assertEquals(testRecipe.getId(), savedRecipeDTO.getId());
-        assertEquals(testRecipe.getCategories().size(), savedRecipeDTO.getCategoryDTOS().size());
-        assertEquals(testRecipe.getIngredients().size(), savedRecipeDTO.getIngredientDTOS().size());
+        assertEquals(testRecipe.getCategories().size(), savedRecipeDTO.getCategories().size());
+        assertEquals(testRecipe.getIngredients().size(), savedRecipeDTO.getIngredients().size());
     }
 
 }

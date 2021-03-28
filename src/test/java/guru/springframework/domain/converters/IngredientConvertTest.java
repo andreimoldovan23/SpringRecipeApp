@@ -44,7 +44,7 @@ public class IngredientConvertTest {
         ingredientDTO.setId(1L);
         ingredientDTO.setAmount(new BigDecimal(".5"));
         ingredientDTO.setDescription("something");
-        ingredientDTO.setUnitOfMeasureDTO(unitOfMeasureDTO);
+        ingredientDTO.setUom(unitOfMeasureDTO);
     }
 
     @AfterEach
@@ -62,8 +62,8 @@ public class IngredientConvertTest {
         assertEquals(1L, dto.getId());
         assertEquals("something", dto.getDescription());
         assertEquals(new BigDecimal(".5"), dto.getAmount());
-        assertEquals("spoon", dto.getUnitOfMeasureDTO().getDescription());
-        assertEquals(1L, dto.getUnitOfMeasureDTO().getId());
+        assertEquals("spoon", dto.getUom().getDescription());
+        assertEquals(1L, dto.getUom().getId());
         assertNull(ingredientToDTO.convert(null));
     }
 

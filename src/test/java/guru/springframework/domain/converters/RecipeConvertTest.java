@@ -1,17 +1,16 @@
 package guru.springframework.domain.converters;
 
-import guru.springframework.domain.Converters.CategoryDTOtoEntity;
-import guru.springframework.domain.Converters.CategoryToDTO;
-import guru.springframework.domain.Converters.IngredientDTOtoEntity;
-import guru.springframework.domain.Converters.IngredientToDTO;
-import guru.springframework.domain.Converters.RecipeToDTO;
 import guru.springframework.domain.Converters.RecipeDTOtoEntity;
+import guru.springframework.domain.Converters.CategoryToDTO;
+import guru.springframework.domain.Converters.IngredientToDTO;
+import guru.springframework.domain.Converters.CategoryDTOtoEntity;
+import guru.springframework.domain.Converters.IngredientDTOtoEntity;
+import guru.springframework.domain.Converters.RecipeToDTO;
+import guru.springframework.domain.Converters.NotesToDTO;
+import guru.springframework.domain.Converters.NotesDTOtoEntity;
 import guru.springframework.domain.Converters.UnitOfMeasureToDTO;
 import guru.springframework.domain.Converters.UOMDTOtoEntity;
-import guru.springframework.domain.DTOs.CategoryDTO;
-import guru.springframework.domain.DTOs.IngredientDTO;
-import guru.springframework.domain.DTOs.RecipeDTO;
-import guru.springframework.domain.DTOs.UnitOfMeasureDTO;
+import guru.springframework.domain.DTOs.*;
 import guru.springframework.domain.Entities.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +29,8 @@ public class RecipeConvertTest {
     private IngredientDTOtoEntity ingredientDTOtoEntity;
     private RecipeToDTO recipeToDTO;
     private RecipeDTOtoEntity recipeDTOtoEntity;
+    private NotesToDTO notesToDTO;
+    private NotesDTOtoEntity notesDTOtoEntity;
 
     private Recipe recipe;
     private RecipeDTO recipeDTO;
@@ -44,8 +45,19 @@ public class RecipeConvertTest {
         categoryDTOtoEntity = new CategoryDTOtoEntity();
         ingredientToDTO = new IngredientToDTO(new UnitOfMeasureToDTO());
         ingredientDTOtoEntity = new IngredientDTOtoEntity(new UOMDTOtoEntity());
-        recipeToDTO = new RecipeToDTO(categoryToDTO, ingredientToDTO);
-        recipeDTOtoEntity = new RecipeDTOtoEntity(categoryDTOtoEntity, ingredientDTOtoEntity);
+        notesToDTO = new NotesToDTO();
+        notesDTOtoEntity = new NotesDTOtoEntity();
+        recipeToDTO = new RecipeToDTO(categoryToDTO, ingredientToDTO, notesToDTO);
+        recipeDTOtoEntity = new RecipeDTOtoEntity(categoryDTOtoEntity, ingredientDTOtoEntity, notesDTOtoEntity);
+
+        Notes notes = Notes.builder()
+                .recipeNotes("noted")
+                .build();
+        notes.setId(1L);
+
+        NotesDTO notesDTO = new NotesDTO();
+        notesDTO.setId(1L);
+        notesDTO.setRecipeNotes("noted");
 
         category = Category.builder()
                 .description("something")
@@ -72,7 +84,7 @@ public class RecipeConvertTest {
         ingredientDTO.setId(1L);
         ingredientDTO.setAmount(new BigDecimal(".5"));
         ingredientDTO.setDescription("something");
-        ingredientDTO.setUnitOfMeasureDTO(unitOfMeasureDTO);
+        ingredientDTO.setUom(unitOfMeasureDTO);
 
         recipe = Recipe.builder()
                 .servings(5)
@@ -83,6 +95,7 @@ public class RecipeConvertTest {
                 .url("http")
                 .source("http")
                 .difficulty(Difficulty.EASY)
+                .notes(notes)
                 .build();
         recipe.setId(1L);
         recipe.getCategories().add(category);
@@ -98,8 +111,9 @@ public class RecipeConvertTest {
         recipeDTO.setUrl("http");
         recipeDTO.setSource("http");
         recipeDTO.setDifficulty(Difficulty.EASY);
-        recipeDTO.getCategoryDTOS().add(categoryDTO);
-        recipeDTO.getIngredientDTOS().add(ingredientDTO);
+        recipeDTO.setNotes(notesDTO);
+        recipeDTO.getCategories().add(categoryDTO);
+        recipeDTO.getIngredients().add(ingredientDTO);
     }
 
     @AfterEach
@@ -116,6 +130,8 @@ public class RecipeConvertTest {
         categoryDTO = null;
         ingredient = null;
         ingredientDTO = null;
+        notesToDTO = null;
+        notesDTOtoEntity = null;
     }
 
     @Test
@@ -131,19 +147,23 @@ public class RecipeConvertTest {
         assertEquals("http", dto.getUrl());
         assertEquals("http", dto.getSource());
         assertEquals(Difficulty.EASY, dto.getDifficulty());
-        assertEquals(1, dto.getCategoryDTOS().size());
-        assertEquals(1, dto.getIngredientDTOS().size());
+        assertEquals(1, dto.getCategories().size());
+        assertEquals(1, dto.getIngredients().size());
 
-        CategoryDTO catDTO = new ArrayList<>(dto.getCategoryDTOS()).get(0);
+        CategoryDTO catDTO = new ArrayList<>(dto.getCategories()).get(0);
         assertEquals(1L, catDTO.getId());
         assertEquals("something", catDTO.getDescription());
 
-        IngredientDTO ingDTO = new ArrayList<>(dto.getIngredientDTOS()).get(0);
+        IngredientDTO ingDTO = new ArrayList<>(dto.getIngredients()).get(0);
         assertEquals(1L, ingDTO.getId());
         assertEquals(new BigDecimal(".5"), ingDTO.getAmount());
         assertEquals("something", ingDTO.getDescription());
-        assertEquals(1L, ingDTO.getUnitOfMeasureDTO().getId());
-        assertEquals("spoon", ingDTO.getUnitOfMeasureDTO().getDescription());
+        assertEquals(1L, ingDTO.getUom().getId());
+        assertEquals("spoon", ingDTO.getUom().getDescription());
+
+        NotesDTO nDTO = dto.getNotes();
+        assertEquals(1L, nDTO.getId());
+        assertEquals("noted", nDTO.getRecipeNotes());
 
         assertNull(recipeToDTO.convert(null));
     }
@@ -174,6 +194,10 @@ public class RecipeConvertTest {
         assertEquals("something", ing.getDescription());
         assertEquals(1L, ing.getUom().getId());
         assertEquals("spoon", ing.getUom().getDescription());
+
+        Notes n = entity.getNotes();
+        assertEquals(1L, n.getId());
+        assertEquals("noted", n.getRecipeNotes());
 
         assertNull(recipeDTOtoEntity.convert(null));
     }
