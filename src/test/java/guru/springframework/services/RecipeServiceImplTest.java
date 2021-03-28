@@ -1,7 +1,7 @@
 package guru.springframework.services;
 
 
-import guru.springframework.domain.Recipe;
+import guru.springframework.domain.Entities.Recipe;
 import guru.springframework.repositories.RecipeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
