@@ -116,7 +116,7 @@ public class IngredientControllerTest {
                 .param("description", "some string")
                 )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/recipe/2/ingredients"));
+                .andExpect(view().name("redirect:/recipe/update/2"));
 
     }
 
