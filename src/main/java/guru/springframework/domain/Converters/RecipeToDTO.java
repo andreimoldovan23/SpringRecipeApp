@@ -40,6 +40,7 @@ public class RecipeToDTO implements Converter<Recipe, RecipeDTO> {
                     recipeDTO.setPrepTime(recp.getPrepTime());
                     recipeDTO.setUrl(recp.getUrl());
                     recipeDTO.setNotes(notesToDTO.convert(recp.getNotes()));
+                    recipeDTO.setImage(recp.getImage());
                     recipeDTO.getCategories().addAll(
                             recp.getCategories().stream()
                                 .map(categoryToDTO::convert)

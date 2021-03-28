@@ -18,6 +18,7 @@
 </head>
 <body>
 <!--/*@thymesVar id="recipe" type="guru.springframework.domain.Entities.Recipe"*/-->
+<!--/*@thymesVar id="difficulty" type="guru.springframework.domain.Entities.Difficulty"*/-->
 <div class="container-fluid" style="margin-top: 20px">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
@@ -26,7 +27,16 @@
                 <div class="pannel-group">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h1 class="panel-title">Edit Recipe Information</h1>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h1 class="panel-title" th:text="${recipe.description}">Recipe Description Here!</h1>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <a class="btn btn-default" href="#"
+                                       th:href="@{'/recipe/' + ${recipe.id} + '/image'}" role="button">Change Image</a>
+                                </div>
+                            </div>
                         </div>
                         <div class="panel-body">
                             <div class="row">
@@ -65,10 +75,15 @@
                                 </div>
                                 <div class="col-md-3 form-group">
                                     <label>Difficulty:</label>
-                                    <select class="form-control">
+                                    <select class="form-control" th:remove="all">
                                         <option>Easy</option>
                                         <option>Medium</option>
                                         <option>Hard</option>
+                                    </select>
+                                    <select class="form-control" th:field="*{difficulty}">
+                                        <option th:each="difficultyValue : ${T(guru.springframework.domain.Entities.Difficulty).values()}"
+                                                th:value="${difficultyValue.name()}"
+                                                th:text="${difficultyValue.name()}">val</option>
                                     </select>
                                 </div>
                             </div>
@@ -94,8 +109,11 @@
                                 <div class="col-md-11 ">
                                     <h1 class="panel-title">Ingredients</h1>
                                 </div>
-                                <div class="col-md-1">
-                                    <a class="btn btn-default" href="#" role="button">Edit</a>
+                                <div class="col-md-1" th:if="${recipe?.id}">
+                                    <a class="btn btn-default"
+                                       role="button"
+                                       href="#"
+                                       th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}">Edit</a>
                                 </div>
                             </div>
                         </div>
@@ -103,12 +121,16 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <ul>
-                                        <li th:remove="all">1 Cup of milk</li>
-                                        <li th:remove="all">1 Teaspoon of chocolate</li>
-                                        <li th:each="ingredient : ${recipe.ingredients}"
-                                            th:text="${(ingredient.getAmount() +
-                                        ' ' + ingredient.uom.getDescription() +
-                                        ' - ' + ingredient.getDescription())}">1 Teaspoon of Sugar
+                                        <li th:remove="all"><a href="#">1 Cup of milk</a></li>
+                                        <li th:remove="all"><a href="#">1 Teaspoon of chocolate</a></li>
+                                        <li th:each="ingredient : ${recipe.ingredients}">
+                                            <a th:text="${(ingredient.getAmount() + ' ' +
+                                            ingredient.uom.getDescription() + ' - ' +
+                                            ingredient.getDescription())}"
+                                               href="#"
+                                               th:href="@{'/recipe/' + ${recipe.id} + '/ingredient/' + ${ingredient.id} + '/update'}">
+                                                1 Teaspoon of Sugar
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>

@@ -114,6 +114,9 @@ public class RecipeConvertTest {
         recipeDTO.setNotes(notesDTO);
         recipeDTO.getCategories().add(categoryDTO);
         recipeDTO.getIngredients().add(ingredientDTO);
+
+        ingredient.setRecipe(recipe);
+        ingredientDTO.setRecipeId(1L);
     }
 
     @AfterEach
@@ -160,6 +163,7 @@ public class RecipeConvertTest {
         assertEquals("something", ingDTO.getDescription());
         assertEquals(1L, ingDTO.getUom().getId());
         assertEquals("spoon", ingDTO.getUom().getDescription());
+        assertEquals(1L, ingDTO.getRecipeId());
 
         NotesDTO nDTO = dto.getNotes();
         assertEquals(1L, nDTO.getId());
@@ -194,6 +198,7 @@ public class RecipeConvertTest {
         assertEquals("something", ing.getDescription());
         assertEquals(1L, ing.getUom().getId());
         assertEquals("spoon", ing.getUom().getDescription());
+        assertNull(ing.getRecipe());
 
         Notes n = entity.getNotes();
         assertEquals(1L, n.getId());

@@ -38,6 +38,7 @@ public class RecipeDTOtoEntity implements Converter<RecipeDTO, Recipe> {
                             .servings(recpDTO.getServings())
                             .source(recpDTO.getSource())
                             .url(recpDTO.getUrl())
+                            .image(recpDTO.getImage())
                             .notes(notesDTOtoEntity.convert(recpDTO.getNotes()))
                             .build();
                     recipe.setId(recpDTO.getId());
