@@ -4,6 +4,8 @@ import guru.springframework.domain.Converters.RecipeDTOtoEntity;
 import guru.springframework.domain.Converters.RecipeToDTO;
 import guru.springframework.domain.DTOs.RecipeDTO;
 import guru.springframework.domain.Entities.Recipe;
+import guru.springframework.exceptions.BadRequestException;
+import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.repositories.RecipeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Recipe findById(Long id) {
-        return recipeRepository.findById(id).orElseThrow(() -> new RuntimeException("Recipe does not exist"));
+        return recipeRepository.findById(id).orElseThrow(() -> new NotFoundException("Recipe does not exist"));
     }
 
     @Override
@@ -43,7 +45,7 @@ public class RecipeServiceImpl implements RecipeService {
         Recipe savedRecipe = detachedRecipe == null ? null : recipeRepository.save(detachedRecipe);
         RecipeDTO savedDto = recipeToDTO.convert(savedRecipe);
         if(savedDto == null)
-            throw new RuntimeException("Invalid recipe");
+            throw new BadRequestException("Invalid recipe");
         return savedDto;
     }
 

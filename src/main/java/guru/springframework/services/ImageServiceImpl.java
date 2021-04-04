@@ -1,6 +1,8 @@
 package guru.springframework.services;
 
 import guru.springframework.domain.Entities.Recipe;
+import guru.springframework.exceptions.BadRequestException;
+import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.repositories.RecipeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +23,7 @@ public class ImageServiceImpl implements ImageService {
     public void saveImage(Long id, MultipartFile file) {
         Optional<Recipe> recipeOptional = recipeRepository.findById(id);
 
-        if(recipeOptional.isEmpty()) throw new RuntimeException("Recipe does not exist");
+        if(recipeOptional.isEmpty()) throw new NotFoundException("Recipe does not exist");
 
         try {
             Recipe recipe = recipeOptional.get();
@@ -32,7 +34,7 @@ public class ImageServiceImpl implements ImageService {
             recipe.setImage(bytes);
             recipeRepository.save(recipe);
         } catch (IOException ioe) {
-            throw new RuntimeException("Error saving image");
+            throw new BadRequestException("Error saving image");
         }
     }
 }

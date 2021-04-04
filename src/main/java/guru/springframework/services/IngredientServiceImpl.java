@@ -5,6 +5,8 @@ import guru.springframework.domain.Converters.IngredientToDTO;
 import guru.springframework.domain.DTOs.IngredientDTO;
 import guru.springframework.domain.Entities.Ingredient;
 import guru.springframework.domain.Entities.Recipe;
+import guru.springframework.exceptions.BadRequestException;
+import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.repositories.RecipeRepository;
 import guru.springframework.repositories.UnitOfMeasureRepository;
 import org.springframework.stereotype.Service;
@@ -37,7 +39,7 @@ public class IngredientServiceImpl implements IngredientService {
                         .filter(ing -> ing.getId().equals(ingId))
                         .map(ingredientToDTO::convert)
                         .findFirst())
-                .orElseThrow(() -> new RuntimeException("Recipe or ingredient do not exist"));
+                .orElseThrow(() -> new NotFoundException("Recipe or ingredient do not exist"));
     }
 
     @Transactional
@@ -46,7 +48,7 @@ public class IngredientServiceImpl implements IngredientService {
         Optional<Recipe> recipeOptional = recipeRepository.findById(dto.getRecipeId());
 
         if (recipeOptional.isEmpty()) {
-            throw new RuntimeException("Recipe does not exist");
+            throw new NotFoundException("Recipe does not exist");
         } else {
             Recipe recipe = recipeOptional.get();
 
@@ -62,11 +64,11 @@ public class IngredientServiceImpl implements IngredientService {
                 ingredient.setDescription(dto.getDescription());
                 ingredient.setAmount(dto.getAmount());
                 ingredient.setUom(unitOfMeasureRepository.findById(dto.getUom().getId())
-                        .orElseThrow(() -> new RuntimeException("UOM NOT FOUND")));
+                        .orElseThrow(() -> new NotFoundException("UOM NOT FOUND")));
             } else {
                 ingredient = ingredientDTOtoEntity.convert(dto);
                 if (ingredient != null) recipe.addIngredient(ingredient);
-                else throw new RuntimeException("Invalid ingredient");
+                else throw new BadRequestException("Invalid ingredient");
             }
 
             Recipe savedRecipe = recipeRepository.save(recipe);
@@ -82,13 +84,13 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public void deleteById(Long recId, Long id) {
         Optional<Recipe> recipeOptional = recipeRepository.findById(recId);
-        if(recipeOptional.isEmpty()) throw new RuntimeException("Recipe does not exist");
+        if(recipeOptional.isEmpty()) throw new NotFoundException("Recipe does not exist");
         Recipe recipe = recipeOptional.get();
 
         Optional<Ingredient> ingredientOptional = recipe.getIngredients().stream()
                 .filter(ing -> ing.getId().equals(id))
                 .findFirst();
-        if(ingredientOptional.isEmpty()) throw new RuntimeException("Ingredient does not exist");
+        if(ingredientOptional.isEmpty()) throw new NotFoundException("Ingredient does not exist");
         Ingredient ingredient = ingredientOptional.get();
 
         ingredient.setRecipe(null);
